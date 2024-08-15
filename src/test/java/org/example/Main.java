@@ -26,28 +26,28 @@ public class Main {
     public void setup() {
 
         // Build the Appium local server service
-//        AppiumServiceBuilder builder = new AppiumServiceBuilder();
-//        builder.withIPAddress("127.0.0.1");
-//        builder.usingPort(4724).withTimeout(Duration.ofSeconds(300));
-//        builder.withArgument(GeneralServerFlag.BASEPATH, "/wd/hub/");
-//        builder.withArgument(GeneralServerFlag.SESSION_OVERRIDE);
-//        builder.withArgument(GeneralServerFlag.LOG_LEVEL, "error");
-//        builder.build();
-//        service = AppiumDriverLocalService.buildService(builder);
-//        service.start();
+        AppiumServiceBuilder builder = new AppiumServiceBuilder();
+        builder.withIPAddress("127.0.0.1");
+        builder.usingPort(4724).withTimeout(Duration.ofSeconds(300));
+        builder.withArgument(GeneralServerFlag.BASEPATH, "/wd/hub/");
+        builder.withArgument(GeneralServerFlag.SESSION_OVERRIDE);
+        builder.withArgument(GeneralServerFlag.LOG_LEVEL, "error");
+        builder.build();
+        service = AppiumDriverLocalService.buildService(builder);
+        service.start();
 
         try {
 
             // Set the healenium which use the selenium hud and appium node running at port 4723
 
-            String nodeURL = "http://192.168.1.2:8085";
+//            String nodeURL = "http://192.168.1.2:8085";
             MutableCapabilities caps = getDesiredCapabilities();
 
             // Initialize the driver using local appium
-//            driver = new AppiumDriver(service.getUrl(), caps);
+            driver = new AppiumDriver(service.getUrl(), caps);
 
             // Initialize the driver using healenium appium
-            driver = new AppiumDriver(new URL(nodeURL), caps);
+//            driver = new AppiumDriver(new URL(nodeURL), caps);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,7 +82,7 @@ public class Main {
     public void teardown() {
         if (driver != null) {
             driver.quit();
-//            service.stop();
+            service.stop();
         }
     }
 
