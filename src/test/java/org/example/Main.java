@@ -1,5 +1,7 @@
 package org.example;
+import com.google.common.collect.ImmutableMap;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
@@ -62,7 +64,7 @@ public class Main {
         caps.setCapability("appium:platformVersion", "13");
         caps.setCapability("appium:automationName", "UiAutomator2");
         caps.setCapability("appium:fullReset", true);
-        caps.setCapability("appium:app", "/Users/mugazp/Downloads/heleniumTest/apks/app_new.apk");
+        caps.setCapability("appium:app", "/Users/mugazp/Downloads/heleniumTest/apks/app_old.apk");
         caps.setCapability("appium:appPackage", "com.example.myquizapp");
         caps.setCapability("appium:appActivity", ".MainActivity");
         caps.setCapability("appium:nativeWebScreenshot",true);
@@ -71,11 +73,28 @@ public class Main {
 
     @Test
     public void sampleTest() throws InterruptedException {
+        // Interaction with the first app
         String welcomeText = driver.findElement(By.id("old_description")).getText();
         System.out.println("Welcome Text: "+ welcomeText);
         driver.findElement(By.id("old_name")).sendKeys("Tester");
         driver.findElement(By.id("btn_start")).click();
-        Thread.sleep(2000);
+
+        //Continue Interaction with second app
+        driver.executeScript("mobile: startActivity",
+                ImmutableMap.of( "intent", "com.experitest.ExperiBank/.LoginActivity"));
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.findElement(By.id("com.experitest.ExperiBank:id/usernameTextField")).sendKeys("Mugaz");
+        driver.findElement(By.id("com.experitest.ExperiBank:id/passwordTextField")).sendKeys("test123");
+        driver.findElement(By.id("com.experitest.ExperiBank:id/loginButton")).click();
+        driver.executeScript("mobile: terminateApp",
+                ImmutableMap.of( "appId", "com.experitest.ExperiBank", "timeout", 5));
+
+        //Return to first app and start Interaction
+        driver.executeScript("mobile: startActivity",
+                ImmutableMap.of( "intent", "com.example.myquizapp/.MainActivity"));
+        driver.findElement(By.id("tv_option_one")).click();
+        driver.findElement(By.id("btn_submit")).click();
+        Thread.sleep(3000);
     }
 
     @After
